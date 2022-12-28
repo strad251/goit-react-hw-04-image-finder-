@@ -1,0 +1,61 @@
+import { Component } from "react";
+import { sendRequest } from "Service/apiService";
+
+import { Searchbar } from "./Searchbar/Searchbar";
+import { ImageGallery } from "./ImageGalley/ImageGallery";
+import { Modal } from "./Modal/Modal";
+
+
+export class App extends Component {
+  state = {
+    query: '',
+    page: 1,
+    images: [],
+    largeImgUrl: '',
+    showBtn: false
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.query !== this.state.query || prevState.page !== this.state.page) {
+      sendRequest(this.state.query, this.state.page).then(
+        data => {
+          this.setState(prevState => {
+          return{images: [...prevState.images, ...data.hits], showBtn: this.state.page < Math.ceil(data.totalHits / 12)}
+        })
+      })
+  }
+}
+  handleSubmit = query => {
+  this.setState({query})
+  }
+  
+  incrementPage = () => {
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    }
+    )
+  }
+    onImageClick = largeImg => {
+    this.setState({ largeImgUrl: largeImg });
+  };
+
+  render() {
+    const { images, largeImgUrl } = this.state;
+    const hasLargeImgUrl = largeImgUrl.length > 0;
+    return (
+        <>
+        <Searchbar handleSubmit={this.handleSubmit} />
+        <ImageGallery photos={images } onImageClick={this.onImageClick}/>
+
+        {this.state.showBtn && (
+        <button type="button" onClick={this.incrementPage}>
+        Load more
+        </button>
+        )}
+        {hasLargeImgUrl && (
+          <Modal largeImgUrl={largeImgUrl} onImageClick={this.onImageClick} />
+        )}
+        </>
+      )
+  }
+
+};
