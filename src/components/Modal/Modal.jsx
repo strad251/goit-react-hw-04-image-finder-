@@ -6,6 +6,12 @@ import css from './Modal.module.css'
 
 export class Modal extends Component {
 
+  componentDidMount() {
+         window.addEventListener('keydown', this.handleKeyDown)
+  } componentWillUnmount() {
+        window.removeEventListener('keydown', this.handleKeyDown)
+  }
+  
    handleBackdrop = event => {
     if (event.target === event.currentTarget) {
       this.props.onImageClick('');
@@ -17,13 +23,7 @@ export class Modal extends Component {
       this.props.onImageClick('');
     }
   };
-  
-  modalOpened() {
-    window.addEventListener('keydown', this.handleKeyDown)
-  }
-  modalClosed() {
-    window.removeEventListener('keydown', this.handleKeyDown)
-  }
+
 
   render() {
     return (

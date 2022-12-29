@@ -14,23 +14,33 @@ export class App extends Component {
     page: 1,
     images: [],
     largeImgUrl: '',
+    error: null,
     showBtn: false,
     isLoading: false,
   }
-  componentDidUpdate(prevProps, prevState) {
+   componentDidUpdate(prevProps, prevState) {
     if (prevState.query !== this.state.query || prevState.page !== this.state.page) {
-      this.setState({ isLoading: true })
+      this.setState({ isLoading: true });
+
       sendRequest(this.state.query, this.state.page).then(
         data => {
           this.setState(prevState => {
           return{images: [...prevState.images, ...data.hits], showBtn: this.state.page < Math.ceil(data.totalHits / 12)}
-        })
+        }).catch(error => this.setState({ error: error.message }))
       }).finally(() => this.setState({ isLoading: false }));
   }
 }
   handleSubmit = query => {
-  this.setState({query, images: []})
-  }
+    this.setState({
+      query,
+      page: 1,
+      images: [],
+      largeImgUrl: '',
+      error: null,
+      showBtn: false,
+      isLoading: false,
+    })
+  };
   
   incrementPage = () => {
     this.setState(prevState => {
@@ -43,11 +53,12 @@ export class App extends Component {
   };
 
   render() {
-    const { images, largeImgUrl, isLoading } = this.state;
+    const { images, largeImgUrl, isLoading, error } = this.state;
     const hasLargeImgUrl = largeImgUrl.length > 0;
     return (
         <>
         <Searchbar handleSubmit={this.handleSubmit} />
+        {error && <p>Something wrong! {error}</p>}
         {isLoading && <Loader />}
         {images?.length > 0 && (
           <ImageGallery photos={images} onImageClick={this.onImageClick} />
