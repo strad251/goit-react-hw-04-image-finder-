@@ -1,3 +1,4 @@
+import css from './Searchbar.module.css'
 import { Component } from "react"
 
 export class Searchbar extends Component {
@@ -17,13 +18,15 @@ export class Searchbar extends Component {
     event.target.reset();
 }
   render() {
-     return (
-    <form onSubmit={this.onSubmitForm}>
-      <input type="text"
+    return (
+      <header className={css.Searchbar}>
+      <form className={css.SearchForm} onSubmit={this.onSubmitForm}>
+      <button className={css.SearchBtn} type="submit"></button>
+      <input className={css.SearchInput} type="text"
       placeholder="Search images and photos"
       onChange={this.setQuery} />
-      <button type="submit">Search</button>
-    </form>
+      </form>
+      </header>
   )
   }
  

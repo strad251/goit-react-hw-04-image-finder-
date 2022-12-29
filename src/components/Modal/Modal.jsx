@@ -10,18 +10,18 @@ export class Modal extends Component {
     }
   };
   
-  modalOpened() {
-    window.addEventListener('keydown', this.handleKeyDown)
-    console.log('escape')
-  }
-  modalClosed() {
-    window.removeEventListener('keydown', this.handleKeyDown)
-  }
   handleKeyDown = e => {
     if (e.code === 'Escape') {
       this.props.onImageClick('');
     }
   };
+  
+  modalOpened() {
+    window.addEventListener('keydown', this.handleKeyDown)
+  }
+  modalClosed() {
+    window.removeEventListener('keydown', this.handleKeyDown)
+  }
 
   render() {
     return (
