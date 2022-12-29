@@ -14,3 +14,10 @@ export const ImageGalleryItem = ({ webformatURL,
     </li>
   )
 }
+
+ImageGalleryItem.propTypes = {
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+  onImageClick: PropTypes.func.isRequired,
+};
+

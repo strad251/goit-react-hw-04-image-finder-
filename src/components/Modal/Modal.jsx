@@ -34,4 +34,8 @@ export class Modal extends Component {
       </div>
     )
   }
-}
+};
+
+Modal.propTypes = {
+  onImageClick: PropTypes.func.isRequired,
+};
