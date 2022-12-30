@@ -1,37 +1,35 @@
 import PropTypes from 'prop-types';
-
+import { useState } from 'react';
 import css from './Searchbar.module.css'
-import { Component } from "react"
 
-export class Searchbar extends Component {
-  state = {
-    query: ''
-  }
 
-  setQuery = (event) => {
-    this.setState({query: event.target.value})
+export const Searchbar = ({handleSubmit}) => {
+  const [query, setQuery] = useState('');
+
+const handleInput = (event) => {
+    setQuery(event.target.value);
   }
-  onSubmitForm = (event) => {
+const onSubmitForm = (event) => {
     event.preventDefault();
-    if (!this.state.query) {
+    if (!query) {
       return
     }
-    this.props.handleSubmit(this.state.query);
+    handleSubmit(query);
     event.target.reset();
 }
-  render() {
+
     return (
       <header className={css.Searchbar}>
-      <form className={css.SearchForm} onSubmit={this.onSubmitForm}>
+      <form className={css.SearchForm} onSubmit={onSubmitForm}>
       <button className={css.SearchBtn} type="submit"></button>
       <input className={css.SearchInput} type="text"
       placeholder="Search images and photos"
-      onChange={this.setQuery} />
+      onChange={handleInput} />
       </form>
       </header>
   )
   }
-};
+
 
 Searchbar.propTypes = {
   handleSubmit: PropTypes.func.isRequired,

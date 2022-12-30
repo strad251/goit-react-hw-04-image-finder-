@@ -1,4 +1,3 @@
-import { Component } from "react";
 import { sendRequest } from "Service/apiService";
 
 import { Searchbar } from "./Searchbar/Searchbar";
@@ -7,72 +6,65 @@ import { Modal } from "./Modal/Modal";
 import { Loader } from "./Loader/Loader";
 
 import css from './App.module.css'
+import { useState } from "react";
+import { useEffect } from "react";
 
-export class App extends Component {
-  state = {
-    query: '',
-    page: 1,
-    images: [],
-    largeImgUrl: '',
-    error: null,
-    showBtn: false,
-    isLoading: false,
-  }
-   componentDidUpdate(prevProps, prevState) {
-    if (prevState.query !== this.state.query || prevState.page !== this.state.page) {
-      this.setState({ isLoading: true });
+export const App = () => {
+const [query, setQuery] = useState('');
+const [page, setPage] = useState('');
+const [images, setImages] = useState([]);
+const [largeImgUrl, setlargeImgUrl] = useState('');
+const [error, setError] = useState(null);
+const [showBtn, setBtn] = useState(false);
+const [isLoading, setIsLoading] = useState(false)
 
-      sendRequest(this.state.query, this.state.page).then(
-        data => {
-          this.setState(prevState => {
-          return{images: [...prevState.images, ...data.hits], showBtn: this.state.page < Math.ceil(data.totalHits / 12)}
-        }).catch(error => this.setState({ error: error.message }))
-      }).finally(() => this.setState({ isLoading: false }));
-  }
-}
-  handleSubmit = query => {
-    this.setState({
-      query,
-      page: 1,
-      images: [],
-      largeImgUrl: '',
-      error: null,
-      showBtn: false,
-      isLoading: false,
-    })
+  useEffect(() => {
+    if (!query) return;
+    setIsLoading(true)
+    sendRequest(query, page).then(data => {
+      setImages(prevState => [...prevState, ...data.hits])
+      setBtn(page < Math.ceil(data.totalHits / 12))
+    }).catch(error => setError(error.message)).finally(() => setIsLoading(false))
+  }, [page, query]);
+
+
+  const handleSubmit = query => {
+    setQuery(query);
+    setPage(1);
+    setImages([]);
+    setlargeImgUrl('');
+    setError(null);
+    setBtn(false);
+    setIsLoading(false);
   };
   
-  incrementPage = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 };
-    }
-    )
+  const incrementPage = () => {
+    setPage((prevPage) => prevPage + 1);
   }
-    onImageClick = largeImg => {
-    this.setState({ largeImgUrl: largeImg });
+  const onImageClick = largeImg => {
+    setlargeImgUrl(largeImg)
   };
 
-  render() {
-    const { images, largeImgUrl, isLoading, error } = this.state;
+
     const hasLargeImgUrl = largeImgUrl.length > 0;
     return (
         <>
-        <Searchbar handleSubmit={this.handleSubmit} />
+        <Searchbar handleSubmit={handleSubmit} />
         {error && <p>Something went wrong! {error}</p>}
         {isLoading && <Loader />}
         {images?.length > 0 && (
-          <ImageGallery photos={images} onImageClick={this.onImageClick} />
+          <ImageGallery photos={images} onImageClick={onImageClick} />
         )}
-        {this.state.showBtn && (
-        <button className={css.LoadMoreBtn} type="button" onClick={this.incrementPage}>
+        {showBtn && (
+        <button className={css.LoadMoreBtn} type="button" onClick={incrementPage}>
         Load more
         </button>
         )}
         {hasLargeImgUrl && (
-          <Modal largeImgUrl={largeImgUrl} onImageClick={this.onImageClick} />
+          <Modal largeImgUrl={largeImgUrl} onImageClick={onImageClick} />
         )}
         </>
       )
-  }
+  
 
 };
