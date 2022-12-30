@@ -58,7 +58,7 @@ export class App extends Component {
     return (
         <>
         <Searchbar handleSubmit={this.handleSubmit} />
-        {error && <p>Something wrong! {error}</p>}
+        {error && <p>Something went wrong! {error}</p>}
         {isLoading && <Loader />}
         {images?.length > 0 && (
           <ImageGallery photos={images} onImageClick={this.onImageClick} />
